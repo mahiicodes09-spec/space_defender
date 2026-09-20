@@ -2,8 +2,14 @@ import pygame
 
 class Player:
     def __init__(self):
-        self.image = pygame.image.load()
-        self.rect = pygame.Rect(350,500,50,50)
+        self.image = pygame.image.load("asset/ship.png")
+        self.image = pygame.transform.scale(self.image, (70, 70))
+
+        self.rect = self.image.get_rect()
+        self.rect.centerx= 400
+        self.rect.bottom= 550
+
+        
         self.speed = 5
 
     def move(self):
