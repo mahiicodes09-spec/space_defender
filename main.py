@@ -7,7 +7,7 @@ from obstacle import Obstacle
 from explosion import Explosion
 from coin import Coin
 from life import Life
-
+from bullet import Bullet
 
 def main():
     pygame.init()
@@ -31,6 +31,7 @@ def main():
     explosions = []
     coin = Coin()
     life = Life()
+    bullets = []
 
     score = 0
     coins_collected = 0
@@ -67,6 +68,7 @@ def main():
                     explosions = []
                     coin = Coin()
                     life = Life()
+                    bullets = []
                     score = 0
                     coins_collected = 0
                     next_life_score = 400
@@ -78,7 +80,19 @@ def main():
                     high_score_shown = False
                     game_state = PLAYING
 
+            if game_state == PLAYING and event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    bullets.append(
+                        Bullet(player.rect.centerx, player.rect.top)
+                    )
+
         if game_state == PLAYING:
+            for bullet in bullets[:]:
+                bullet.move()
+
+                if bullet.rect.bottom < 0:
+                    bullets.remove(bullet)
+
             player.move()
 
             for obstacle in obstacles:
@@ -89,6 +103,7 @@ def main():
 
                 if player.hitbox.colliderect(obstacle.hitbox):
                     player.lives -= 1
+
                     explosions.append(
                         Explosion(
                             obstacle.rect.centerx,
@@ -97,13 +112,53 @@ def main():
                     )
 
                     obstacle.change_enemy()
-                    obstacle.rect.x = random.randint(0, 800 - obstacle.size)
-                    obstacle.rect.y = random.randint(-300, -50)
-                    obstacle.speed = random.randint(15, 17) if level_2 else random.randint(11, 13)
+                    obstacle.rect.x = random.randint(
+                        0,
+                        800 - obstacle.size
+                    )
+                    obstacle.rect.y = random.randint(
+                        -300,
+                        -50
+                    )
+                    obstacle.speed = (
+                        random.randint(15, 17)
+                        if level_2
+                        else random.randint(11, 13)
+                    )
                     obstacle.update_hitbox()
 
                     if player.lives <= 0:
                         game_state = GAME_OVER
+
+                for bullet in bullets[:]:
+                    if bullet.rect.colliderect(obstacle.hitbox):
+                        bullets.remove(bullet)
+
+                        explosions.append(
+                            Explosion(
+                                obstacle.rect.centerx,
+                                obstacle.rect.centery
+                            )
+                        )
+
+                        obstacle.change_enemy()
+                        obstacle.rect.x = random.randint(
+                            0,
+                            800 - obstacle.size
+                        )
+                        obstacle.rect.y = random.randint(
+                            -300,
+                            -50
+                        )
+                        obstacle.speed = (
+                            random.randint(15, 17)
+                            if level_2
+                            else random.randint(11, 13)
+                        )
+                        obstacle.update_hitbox()
+
+                        score += 50
+                        break
 
             coin.move()
             collected = coin.check_collection(player.hitbox)
@@ -118,6 +173,7 @@ def main():
             if score >= next_life_score:
                 if not life.active:
                     life.spawn()
+
                 next_life_score += 400
 
             if life.collect(player.hitbox):
@@ -152,35 +208,37 @@ def main():
                 if high_score_timer <= 0:
                     new_high_score = False
 
-        background.draw(screen)
-
         if game_state == START:
+            screen.fill((20, 20, 50))
+
             title = big_font.render(
                 "SPACE DEFENDER",
                 True,
                 (255, 255, 255)
             )
-
             text = font.render(
                 "Press SPACE to Start",
                 True,
                 (255, 255, 255)
             )
-
             screen.blit(
                 title,
                 title.get_rect(center=(400, 250))
             )
-
             screen.blit(
                 text,
                 text.get_rect(center=(400, 320))
             )
 
-        else:
+        elif game_state == PLAYING:
+            background.draw(screen)
+
             coin.draw(screen)
             life.draw(screen)
             screen.blit(player.image, player.rect)
+
+            for bullet in bullets:
+                bullet.draw(screen)
 
             for obstacle in obstacles:
                 screen.blit(obstacle.image, obstacle.rect)
@@ -236,28 +294,63 @@ def main():
                     text.get_rect(center=(400, 150))
                 )
 
-            if game_state == GAME_OVER:
-                text = big_font.render(
-                    "GAME OVER",
-                    True,
-                    (255, 255, 255)
-                )
+        elif game_state == GAME_OVER:
+            screen.fill((20, 20, 50))
 
-                restart = font.render(
-                    "Press R to Restart",
-                    True,
-                    (255, 255, 255)
-                )
+            text = big_font.render(
+                "GAME OVER",
+                True,
+                (255, 255, 0)
+            )
 
-                screen.blit(
-                    text,
-                    text.get_rect(center=(400, 250))
-                )
+            score_text = font.render(
+                f"Final Score: {score}",
+                True,
+                (255, 255, 255)
+            )
 
-                screen.blit(
-                    restart,
-                    restart.get_rect(center=(400, 320))
-                )
+            high_score_text = font.render(
+                f"High Score: {high_score}",
+                True,
+                (255, 255, 255)
+            )
+
+            coins_text = font.render(
+                f"Total Coins Collected: {total_coins}",
+                True,
+                (255, 255, 255)
+            )
+
+            restart = font.render(
+                "Press R to Restart",
+                True,
+                (255, 255, 255)
+            )
+
+            screen.blit(
+                text,
+                text.get_rect(center=(400, 200))
+            )
+
+            screen.blit(
+                score_text,
+                score_text.get_rect(center=(400, 270))
+            )
+
+            screen.blit(
+                high_score_text,
+                high_score_text.get_rect(center=(400, 315))
+            )
+
+            screen.blit(
+                coins_text,
+                coins_text.get_rect(center=(400, 360))
+            )
+
+            screen.blit(
+                restart,
+                restart.get_rect(center=(400, 430))
+            )
 
         pygame.display.flip()
         clock.tick(60)
@@ -271,6 +364,5 @@ def main():
         json.dump(game_data, file, indent=4)
 
     pygame.quit()
-    
 if __name__ == "__main__":
     main()
