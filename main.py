@@ -51,6 +51,21 @@ def main():
 
     font = pygame.font.Font(None, 36)
     big_font = pygame.font.Font(None, 60)
+    start_bg = pygame.image.load(
+    "asset/gamestart.jpeg").convert()
+
+    start_bg = pygame.transform.scale(
+    start_bg,
+    (800, 600))
+
+    gameover_bg = pygame.image.load(
+    "asset/gameover.jpeg").convert()
+
+    gameover_bg = pygame.transform.scale(
+    gameover_bg,
+    (800, 600))
+    heart_image = pygame.image.load("asset/extra_life.png").convert_alpha()
+    heart_image = pygame.transform.scale(heart_image, (30, 30))
 
     while running:
         for event in pygame.event.get():
@@ -83,16 +98,13 @@ def main():
             if game_state == PLAYING and event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     bullets.append(
-                        Bullet(player.rect.centerx, player.rect.top)
-                    )
-
+                        Bullet(player.rect.centerx, player.rect.top))
         if game_state == PLAYING:
             for bullet in bullets[:]:
                 bullet.move()
-
+                
                 if bullet.rect.bottom < 0:
                     bullets.remove(bullet)
-
             player.move()
 
             for obstacle in obstacles:
@@ -108,23 +120,17 @@ def main():
                         Explosion(
                             obstacle.rect.centerx,
                             obstacle.rect.centery
-                        )
-                    )
+                        ))
 
                     obstacle.change_enemy()
-                    obstacle.rect.x = random.randint(
-                        0,
-                        800 - obstacle.size
-                    )
-                    obstacle.rect.y = random.randint(
-                        -300,
-                        -50
-                    )
+                    obstacle.rect.x = random.randint(0,800 - obstacle.size)
+                    obstacle.rect.y = random.randint(-300,-50)
+                        
                     obstacle.speed = (
                         random.randint(15, 17)
                         if level_2
-                        else random.randint(11, 13)
-                    )
+                        else random.randint(11, 13))
+                    
                     obstacle.update_hitbox()
 
                     if player.lives <= 0:
@@ -138,9 +144,7 @@ def main():
                             Explosion(
                                 obstacle.rect.centerx,
                                 obstacle.rect.centery
-                            )
-                        )
-
+                            ))
                         obstacle.change_enemy()
                         obstacle.rect.x = random.randint(
                             0,
@@ -209,7 +213,7 @@ def main():
                     new_high_score = False
 
         if game_state == START:
-            screen.fill((20, 20, 50))
+            screen.blit(start_bg, (0,0))
 
             title = big_font.render(
                 "SPACE DEFENDER",
@@ -255,14 +259,10 @@ def main():
                 (10, 10)
             )
 
-            screen.blit(
-                font.render(
-                    f"Lives: {player.lives}",
-                    True,
-                    (255, 255, 255)
-                ),
-                (10, 45)
-            )
+            for i in range(player.lives):
+                screen.blit(
+                heart_image,
+                (10 + i * 35, 45))
 
             screen.blit(
                 font.render(
@@ -279,8 +279,7 @@ def main():
                     True,
                     (255, 255, 255)
                 ),
-                (570, 10)
-            )
+                (570, 10))
 
             if new_high_score:
                 text = big_font.render(
@@ -295,7 +294,7 @@ def main():
                 )
 
         elif game_state == GAME_OVER:
-            screen.fill((20, 20, 50))
+            screen.blit(gameover_bg,(0,0))
 
             text = big_font.render(
                 "GAME OVER",
@@ -357,8 +356,7 @@ def main():
 
     game_data = {
         "high_score": high_score,
-        "total_coins": total_coins
-    }
+        "total_coins": total_coins}
 
     with open("game_data.json", "w") as file:
         json.dump(game_data, file, indent=4)

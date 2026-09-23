@@ -12,8 +12,7 @@ class Player:
              self.rect.x + 25,
              self.rect.y + 25,
              50,
-             50
-        )
+             50)
 
         self.lives = 3
         self.speed = 5
@@ -26,7 +25,6 @@ class Player:
 
         if keys[pygame.K_RIGHT] and self.rect.x < 800 - self.rect.width:
             self.rect.x += self.speed 
-
 
         self.hitbox.x = self.rect.x + 25
         self.hitbox.y = self.rect.y + 25   

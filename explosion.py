@@ -1,5 +1,4 @@
 import pygame
-
 class Explosion:
 
     def __init__(self, x, y):
@@ -18,12 +17,11 @@ class Explosion:
         self.frame_index = 0
         self.animation_counter = 0
 
-        # Make explosion clearly visible
+        #to make thr explosion visible
         self.size = 120
 
         self.image = pygame.image.load(
-            self.frames[self.frame_index]
-        ).convert_alpha()
+            self.frames[self.frame_index]).convert_alpha()
 
         self.image = pygame.transform.scale(
             self.image,
@@ -31,16 +29,13 @@ class Explosion:
         )
 
         self.rect = self.image.get_rect(
-            center=(x, y)
-        )
+            center=(x, y))
 
         self.finished = False
 
     def update(self):
 
         self.animation_counter += 1
-
-        # Slower animation
         if self.animation_counter >= 3:
 
             self.animation_counter = 0
