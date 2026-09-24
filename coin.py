@@ -1,6 +1,5 @@
 import pygame
 import random
-
 class Coin:
     def __init__(self):
 

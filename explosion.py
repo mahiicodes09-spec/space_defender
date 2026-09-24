@@ -25,8 +25,7 @@ class Explosion:
 
         self.image = pygame.transform.scale(
             self.image,
-            (self.size, self.size)
-        )
+            (self.size, self.size))
 
         self.rect = self.image.get_rect(
             center=(x, y))
@@ -47,17 +46,14 @@ class Explosion:
                 return
 
             self.image = pygame.image.load(
-                self.frames[self.frame_index]
-            ).convert_alpha()
+                self.frames[self.frame_index]).convert_alpha()
 
             self.image = pygame.transform.scale(
                 self.image,
-                (self.size, self.size)
-            )
+                (self.size, self.size))
 
     def draw(self, screen):
 
         screen.blit(
             self.image,
-            self.rect
-        )
+            self.rect)

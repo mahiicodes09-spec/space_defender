@@ -1,6 +1,5 @@
 import pygame
 class Bullet:
-
     def __init__(self,x,y):
         self.speed = 10
         self.size = 8

@@ -88,7 +88,6 @@ class Obstacle:
 
         self.animation_counter += 1
 
-        # Change frame every 8 game frames
         if self.animation_counter >= 8:
 
             self.animation_counter = 0

@@ -1,7 +1,5 @@
 import pygame
 import random
-
-
 class Life:
 
     def __init__(self):
